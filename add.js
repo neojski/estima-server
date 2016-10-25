@@ -7,12 +7,16 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 let html = `
+  <style>
+    li { width: 300px; clear: both }
+    label input { float: right }
+  </style>
   <form method=POST>
-    <label>team<input name=team /></label>
-    <label>question<input name=question /></label>
-    <label>from<input name=from /></label>
-    <label>to<input name=to /></label>
-    <input type=submit />
+    <li><label>team<input autocomplete=off name=team /></label>
+    <li><label>question<input autocomplete=off name=question /></label>
+    <li><label>from<input autocomplete=off name=from /></label>
+    <li><label>to<input autocomplete=off name=to /></label>
+    <li><input type=submit />
   </form>
 `;
 
