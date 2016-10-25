@@ -27,7 +27,7 @@ app.post('/', function (req, res) {
   let newRow = {
     date: Date.now(),
     team: +req.body.team,
-    question: +req.body.question,
+    question: (+req.body.question) - 1, // internally, we number questions from 0
     from: +req.body.from,
     to: +req.body.to,
   };
