@@ -16,11 +16,13 @@ let html = `
   </form>
 `;
 
-app.get('/', function (req, res) {
+app.get('/add', function (req, res) {
   res.send(html);
 });
 
-app.post('/', function (req, res) {
+app.use(express.static('dist'));
+
+app.post('/add', function (req, res) {
   // This should be synchronous operation so that no two clients write at the same time
   const logFile = 'log.json';
   let data = JSON.parse(fs.readFileSync(logFile));
@@ -37,6 +39,6 @@ app.post('/', function (req, res) {
   res.send('added:' + JSON.stringify(newRow) + html);
 });
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.listen(3000, '0.0.0.0', function () {
+  console.log('Estimathon app listening on port 3000!');
 });
