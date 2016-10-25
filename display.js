@@ -9,6 +9,11 @@ let correctAnswers =
 let teamNames = [
   "pierogi",
   "korale koloru korolowego",
+  "red",
+  "green",
+  "blue",
+  "asdfme",
+  "321523",
   "empty",
 ];
 
@@ -23,10 +28,19 @@ for (let team = 0; team < teamNames.length; team++) {
 }
 
 for (let row of data) {
+  if (!answers[row.team]) {
+    console.error('Invalid team', row);
+    continue;
+  }
+  if (!answers[row.team][row.question]) {
+    console.error('Invalid question', row);
+    continue;
+  }
   answers[row.team][row.question].push({from: row.from, to: row.to});
 }
 
-// >= 1 for positive or negative for wrong answers (I wish js had variants)
+// isCorrect === true  then result is result
+// isCorrect === false then result is number of failures
 function calculateScore (question, answers) {
   function isRight (answer) {
     let correctAnswer = correctAnswers[question];
@@ -34,28 +48,34 @@ function calculateScore (question, answers) {
   }
 
   let result = 0;
+  let isCorrect;
   for (let answer of answers) {
     if (isRight (answer)) {
       result = Math.floor (answer.to / answer.from);
-    } else {
       if (result < 0) {
-        result--;
-      } else {
-        result = -1;
+        result = Infinity;
       }
+      isCorrect = true;
+    } else {
+      if (!isCorrect) {
+        result++;
+      } else {
+        result = 1;
+      }
+      isCorrect = false;
     }
   }
-  return result;
+  return { isCorrect, result };
 }
 
 function teamScore (teamAnswers) {
   let sum = 10;
   let numberOfGoodOnes = 0;
   for (let question = 0; question < correctAnswers.length; question++) {
-    let questionScore = calculateScore (question, teamAnswers[question]);
-    if (questionScore > 0) { // correct
+    let { isCorrect, result } = calculateScore (question, teamAnswers[question]);
+    if (isCorrect) {
       numberOfGoodOnes++;
-      sum += questionScore;
+      sum += result;
     }
   }
   return sum * Math.pow(2, correctAnswers.length - numberOfGoodOnes);
@@ -64,15 +84,20 @@ function teamScore (teamAnswers) {
 function row (teamAnswers) {
   let tds = [];
   for (let question = 0; question < correctAnswers.length; question++) {
-    let score = calculateScore(question, teamAnswers[question]);
-    if (score > 0) {
-      tds.push(score);
+    let answers = teamAnswers[question];
+    if (answers.length === 0) {
+      tds.push('');
     } else {
-      let xs = '';
-      for (let i = 0; i < -score; i++) {
-        xs += 'x';
+      let { isCorrect, result } = calculateScore(question, answers);
+      if (isCorrect) {
+        tds.push(result);
+      } else {
+        let xs = '';
+        for (let i = 0; i < result; i++) {
+          xs += 'x';
+        }
+        tds.push('<span style="color:red">' + xs + '</span>');
       }
-      tds.push('<span style="color:red">' + xs + '</span>');
     }
   }
   tds.push(teamScore(teamAnswers));
