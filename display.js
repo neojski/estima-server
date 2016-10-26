@@ -41,14 +41,14 @@ for (let row of data) {
 
 // isCorrect === true  then result is result
 // isCorrect === false then result is number of failures
-function calculateScore (question, answers) {
+function questionScore (question, answers) {
   function isRight (answer) {
     let correctAnswer = correctAnswers[question];
     return (answer.from <= correctAnswer && correctAnswer <= answer.to);
   }
 
   let result = 0;
-  let isCorrect;
+  let isCorrect = false;
   for (let answer of answers) {
     if (isRight (answer)) {
       result = Math.floor (answer.to / answer.from);
@@ -72,7 +72,7 @@ function teamScore (teamAnswers) {
   let sum = 10;
   let numberOfGoodOnes = 0;
   for (let question = 0; question < correctAnswers.length; question++) {
-    let { isCorrect, result } = calculateScore (question, teamAnswers[question]);
+    let { isCorrect, result } = questionScore (question, teamAnswers[question]);
     if (isCorrect) {
       numberOfGoodOnes++;
       sum += result;
@@ -88,7 +88,7 @@ function row (teamAnswers) {
     if (answers.length === 0) {
       tds.push('');
     } else {
-      let { isCorrect, result } = calculateScore(question, answers);
+      let { isCorrect, result } = questionScore(question, answers);
       if (isCorrect) {
         tds.push(result);
       } else {
@@ -101,7 +101,7 @@ function row (teamAnswers) {
     }
   }
   tds.push(teamScore(teamAnswers));
-  return tds
+  return tds;
 }
 
 
