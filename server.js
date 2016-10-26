@@ -27,6 +27,7 @@ app.get('/add', function (req, res) {
 });
 
 app.use(express.static('dist'));
+app.use(express.static('css'));
 
 const logFile = 'dist/log.json';
 function regenerateScoreboard() {

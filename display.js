@@ -104,20 +104,30 @@ module.exports = function (data) {
     return tds;
   }
   
-  
   let header = ['team'];
   for (let question = 0; question < correctAnswers.length; question++) {
     header.push(question + 1);
   }
   header.push('score');
+  thead = '<thead class="thead-inverse"><tr>' + header.map(x => {return '<td>' + x + '</td>'}).join('') + '</tr></thead>';
   
-  let trs = [header.map(x => {return '<td>' + x + '</td>'})];
+  let trs = [];
   for (let team = 0; team < teamNames.length; team++) {
     let teamAnswers = answers[team];
     let tds = [teamNames[team]].concat(row(teamAnswers)).map(x => {return '<td>' + x + '</td>'});
     trs.push(tds);
   }
   
-  return ('<meta http-equiv="refresh" content="5"/><table border=1>' + trs.map(tr => {return '<tr>' + tr.join('') + '</tr>'}).join('') + '</table>');
+  return (`
+    <!doctype html>
+      <head>
+        <style> thead { font-weight: bold } </style>
+        <meta http-equiv="refresh" content="5"/>
+        <link rel="stylesheet" href="bootstrap.min.css">
+      </head>
+      <body>
+        <table class="table table-bordered table-striped">${thead}</thead><tbody>${trs.map(tr => {return '<tr>' + tr.join('') + '</tr>'}).join('')}</tbody></table>
+      </body>
+      `);
   
 };
