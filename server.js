@@ -2,6 +2,8 @@ var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser')
 var app = express();
+var display = require('./display');
+
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
@@ -26,9 +28,22 @@ app.get('/add', function (req, res) {
 
 app.use(express.static('dist'));
 
+const logFile = 'dist/log.json';
+function regenerateScoreboard() {
+  let data = JSON.parse(fs.readFileSync(logFile));
+  fs.writeFileSync('dist/scoreboard.html', display(data));
+
+  // backups
+  fs.writeFileSync('dist/scoreboard' + (new Date().toISOString()) + '.html', display(data));
+}
+
+app.get('/refresh', function (req, res) {
+  regenerateScoreboard();
+  res.send('regenerated');
+});
+
 app.post('/add', function (req, res) {
   // This should be synchronous operation so that no two clients write at the same time
-  const logFile = 'log.json';
   let data = JSON.parse(fs.readFileSync(logFile));
   let newRow = {
     date: Date.now(),
@@ -39,6 +54,8 @@ app.post('/add', function (req, res) {
   };
   data.push(newRow);
   fs.writeFileSync(logFile, JSON.stringify(data));
+
+  regenerateScoreboard();
 
   res.send('added:' + JSON.stringify(newRow) + html);
 });
