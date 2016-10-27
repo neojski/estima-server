@@ -1,4 +1,4 @@
-# estimathon
+# estima-server
 
 - `npm install`
 - `npm start`
