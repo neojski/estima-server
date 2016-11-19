@@ -45,14 +45,14 @@ regenerateScoreboard();
 
 app.post('/add', function (req, res) {
   // This should be synchronous operation so that no two clients write at the same time
-  let data = JSON.parse(fs.readFileSync(logFile));
   let newRow = {
     date: Date.now(),
     team: +req.body.team,
-    question: (+req.body.question) - 1, // internally, we number questions from 0
+    question: (+req.body.question),
     from: +req.body.from,
     to: +req.body.to,
   };
+  let data = JSON.parse(fs.readFileSync(logFile));
   data.push(newRow);
   fs.writeFileSync(logFile, JSON.stringify(data));
 

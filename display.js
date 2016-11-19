@@ -22,7 +22,7 @@ module.exports = function (data) {
 
   for (let team = 0; team < teamNames.length; team++) {
     answers[team] = {};
-    for (let question = 0; question < correctAnswers.length; question++) {
+    for (let question = 1; question <= correctAnswers.length; question++) {
       answers[team][question] = [];
     }
   }
@@ -71,7 +71,7 @@ module.exports = function (data) {
   function teamScore (teamAnswers) {
     let sum = 10;
     let numberOfGoodOnes = 0;
-    for (let question = 0; question < correctAnswers.length; question++) {
+    for (let question = 1; question <= correctAnswers.length; question++) {
       let { isCorrect, result } = questionScore (question, teamAnswers[question]);
       if (isCorrect) {
         numberOfGoodOnes++;
@@ -83,7 +83,7 @@ module.exports = function (data) {
 
   function row (teamAnswers) {
     let tds = [];
-    for (let question = 0; question < correctAnswers.length; question++) {
+    for (let question = 1; question <= correctAnswers.length; question++) {
       let answers = teamAnswers[question];
       if (answers.length === 0) {
         tds.push('');
@@ -105,8 +105,8 @@ module.exports = function (data) {
   }
 
   let header = ['team'];
-  for (let question = 0; question < correctAnswers.length; question++) {
-    header.push(question + 1);
+  for (let question = 1; question <= correctAnswers.length; question++) {
+    header.push(question);
   }
   header.push('score');
   thead = '<thead class="thead-inverse"><tr>' + header.map(x => {return '<td>' + x + '</td>'}).join('') + '</tr></thead>';
