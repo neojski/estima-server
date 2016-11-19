@@ -37,11 +37,7 @@ function regenerateScoreboard() {
   // backups
   fs.writeFileSync('dist/scoreboard' + (new Date().toISOString()) + '.html', display(data));
 }
-
-app.get('/refresh', function (req, res) {
-  regenerateScoreboard();
-  res.send('regenerated');
-});
+regenerateScoreboard();
 
 app.post('/add', function (req, res) {
   // This should be synchronous operation so that no two clients write at the same time
