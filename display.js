@@ -16,17 +16,17 @@ module.exports = function (data) {
     "321523",
     "empty",
   ];
-  
+
   // team -> question -> answers
   let answers = {};
-  
+
   for (let team = 0; team < teamNames.length; team++) {
     answers[team] = {};
     for (let question = 0; question < correctAnswers.length; question++) {
       answers[team][question] = [];
     }
   }
-  
+
   for (let row of data) {
     if (!answers[row.team]) {
       console.error('Invalid team', row);
@@ -38,7 +38,7 @@ module.exports = function (data) {
     }
     answers[row.team][row.question].push({from: row.from, to: row.to});
   }
-  
+
   // isCorrect === true  then result is result
   // isCorrect === false then result is number of failures
   function questionScore (question, answers) {
@@ -46,7 +46,7 @@ module.exports = function (data) {
       let correctAnswer = correctAnswers[question];
       return (answer.from <= correctAnswer && correctAnswer <= answer.to);
     }
-  
+
     let result = 0;
     let isCorrect = false;
     for (let answer of answers) {
@@ -67,7 +67,7 @@ module.exports = function (data) {
     }
     return { isCorrect, result };
   }
-  
+
   function teamScore (teamAnswers) {
     let sum = 10;
     let numberOfGoodOnes = 0;
@@ -80,7 +80,7 @@ module.exports = function (data) {
     }
     return sum * Math.pow(2, correctAnswers.length - numberOfGoodOnes);
   }
-  
+
   function row (teamAnswers) {
     let tds = [];
     for (let question = 0; question < correctAnswers.length; question++) {
@@ -103,21 +103,21 @@ module.exports = function (data) {
     tds.push(teamScore(teamAnswers));
     return tds;
   }
-  
+
   let header = ['team'];
   for (let question = 0; question < correctAnswers.length; question++) {
     header.push(question + 1);
   }
   header.push('score');
   thead = '<thead class="thead-inverse"><tr>' + header.map(x => {return '<td>' + x + '</td>'}).join('') + '</tr></thead>';
-  
+
   let trs = [];
   for (let team = 0; team < teamNames.length; team++) {
     let teamAnswers = answers[team];
     let tds = [teamNames[team]].concat(row(teamAnswers)).map(x => {return '<td>' + x + '</td>'});
     trs.push(tds);
   }
-  
+
   return (`
     <!doctype html>
       <head>
@@ -129,5 +129,5 @@ module.exports = function (data) {
         <table class="table table-bordered table-striped">${thead}</thead><tbody>${trs.map(tr => {return '<tr>' + tr.join('') + '</tr>'}).join('')}</tbody></table>
       </body>
       `);
-  
+
 };

@@ -26,8 +26,12 @@ app.get('/add', function (req, res) {
   res.send(html);
 });
 
-app.use(express.static('dist'));
 app.use(express.static('css'));
+
+app.get('/', function (req, res) {
+  var data = fs.readFileSync('dist/scoreboard.html');
+  res.send(data.toString());
+});
 
 const logFile = 'dist/log.json';
 function regenerateScoreboard() {

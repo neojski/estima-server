@@ -2,5 +2,5 @@
 
 - `npm install`
 - `npm start`
-- navigate to `http://localhost:3000/` for adding results
-- open `dist/test.html` for score board
+- see `http://localhost:3000` for scoreboard results
+- see `http://localhost:3000/add` for adding results
