@@ -1,10 +1,20 @@
 var fs = require('fs');
+var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser')
 var app = express();
 var display = require('./display');
+var mkdirp = require('mkdirp');
+var touch = require('touch');
 
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+const logFile = 'dist/log.json';
+
+function writeSync (file, data) {
+  mkdirp.sync(path.dirname(file));
+  fs.writeFileSync(file, data);
+}
+
+app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
 }));
 
@@ -22,10 +32,6 @@ let html = `
   </form>
 `;
 
-app.get('/add', function (req, res) {
-  res.send(html);
-});
-
 app.use(express.static('css'));
 
 app.get('/', function (req, res) {
@@ -33,15 +39,23 @@ app.get('/', function (req, res) {
   res.send(data.toString());
 });
 
-const logFile = 'dist/log.json';
 function regenerateScoreboard() {
-  let data = JSON.parse(fs.readFileSync(logFile));
-  fs.writeFileSync('dist/scoreboard.html', display(data));
+  let data = null;
+  try {
+    data = JSON.parse(fs.readFileSync(logFile));
+  } catch (e) {
+    data = [];
+  }
+  writeSync('dist/scoreboard.html', display(data));
 
   // backups
-  fs.writeFileSync('dist/scoreboard' + (new Date().toISOString()) + '.html', display(data));
+  writeSync('dist/scoreboard' + (new Date().toISOString()) + '.html', display(data));
 }
 regenerateScoreboard();
+
+app.get('/add', function (req, res) {
+  res.send(html);
+});
 
 app.post('/add', function (req, res) {
   // This should be synchronous operation so that no two clients write at the same time
@@ -52,9 +66,14 @@ app.post('/add', function (req, res) {
     from: +req.body.from,
     to: +req.body.to,
   };
-  let data = JSON.parse(fs.readFileSync(logFile));
+  let data = null;
+  try {
+    data = JSON.parse(fs.readFileSync(logFile));
+  } catch (e) {
+    data = [];
+  }
   data.push(newRow);
-  fs.writeFileSync(logFile, JSON.stringify(data));
+  writeSync(logFile, JSON.stringify(data));
 
   regenerateScoreboard();
 
@@ -62,5 +81,5 @@ app.post('/add', function (req, res) {
 });
 
 app.listen(3000, '0.0.0.0', function () {
-  console.log('Estimathon app listening on port 3000!');
+  console.log('Estimathon app running on http://localhost:3000');
 });
