@@ -1,6 +1,9 @@
 # estima-server
 
 - `npm install`
+- insert answers into js/index.js
+- assign each team name a number starting from 0
+- insert them into js/index.js
 - `npm start`
 - see `http://localhost:3000` for scoreboard results
 - see `http://localhost:3000/add` for adding results
