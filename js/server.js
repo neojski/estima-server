@@ -12,6 +12,7 @@ const logFile = 'dist/log.json';
 function writeSync (file, data) {
   mkdirp.sync(path.dirname(file));
   fs.writeFileSync(file, data);
+  fs.writeFileSync(file + (new Date()).toISOString(), data); // write backup
 }
 
 function getData() {
