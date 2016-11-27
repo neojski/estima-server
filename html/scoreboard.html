@@ -1,10 +1,25 @@
 <!doctype html>
 <head>
-  <style> thead { font-weight: bold } </style>
+  <style>
+  thead { font-weight: bold }
+  #timer {
+    text-align: center
+  }
+  .timer-html {
+    font-size: 40px
+  }
+  </style>
   <link rel="stylesheet" href="bootstrap.min.css">
   <script src="index.js"></script>
 </head>
 <body>
+  <div id="timer">
+    <span class="timer-html" id="js-timer-html"></span>
+    <button id="js-timer-start">start</button>
+    <button id="js-timer-stop">stop</button>
+    <button id="js-timer-restart">restart</button>
+  </div>
+
   <div id="table"></div>
   <div id="error"></div>
 </body>

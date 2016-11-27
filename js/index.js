@@ -152,6 +152,44 @@ function updateData () {
   });
 }
 
+function timer () {
+  let total = 600;
+  let left = localStorage.timer || total;
+  let interval = null;
+
+  function render () {
+    let node = document.getElementById('js-timer-html');
+    node.innerHTML = left;
+  }
+  function setLeft (n) {
+    left = n;
+    localStorage.timer = n;
+    if (left >= 0) {
+      render();
+    }
+  }
+  function tick() {
+    setLeft(left - 1);
+  }
+  function start () {
+    // It's more pleasant UI if we tick right away
+    tick();
+    interval = setInterval(tick, 1000);
+  }
+  function stop () {
+    clearInterval(interval);
+  }
+  function restart () {
+    setLeft(total);
+  }
+  render();
+
+  document.getElementById('js-timer-start').onclick = start;
+  document.getElementById('js-timer-stop').onclick = stop;
+  document.getElementById('js-timer-restart').onclick = restart;
+}
+
 onload = function () {
+  timer();
   updateData();
 };
