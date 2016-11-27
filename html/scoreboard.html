@@ -3,10 +3,9 @@
   <style>
   thead { font-weight: bold }
   #timer {
-    text-align: center
-  }
-  .timer-html {
-    font-size: 40px
+    text-align: center;
+    overflow: hidden;
+      transition: 1s
   }
   </style>
   <link rel="stylesheet" href="bootstrap.min.css">
@@ -14,10 +13,14 @@
 </head>
 <body>
   <div id="timer">
-    <span class="timer-html" id="js-timer-html"></span>
-    <button id="js-timer-start">start</button>
-    <button id="js-timer-stop">stop</button>
-    <button id="js-timer-restart">restart</button>
+    <div style="overflow:hidden">
+      <div class="timer-html" id="js-timer-html"></div>
+    </div>
+    <div>
+      <button id="js-timer-start">start</button>
+      <button id="js-timer-stop">stop</button>
+      <button id="js-timer-restart">restart</button>
+    </div>
   </div>
 
   <div id="table"></div>

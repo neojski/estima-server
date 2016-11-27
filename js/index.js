@@ -153,18 +153,46 @@ function updateData () {
 }
 
 function timer () {
-  let total = 600;
-  let left = localStorage.timer || total;
+  let total = 60 * 30;
+  let left = Math.min(localStorage.timer || total, total); // if total was changed down
   let interval = null;
 
   function render () {
+    let specialEnd = 60; // last minute is special
+    let minSize = 30;
+    let increment = 60;
     let node = document.getElementById('js-timer-html');
-    node.innerHTML = left;
+
+    function padfloor(n) {
+      n = Math.floor(n);
+      if (n < 10) {
+        return '0' + n;
+      } else {
+        return n;
+      }
+    }
+    if (left > specialEnd) {
+      node.innerHTML = padfloor(left / 60) + ':' + padfloor(left % 60);
+    } else {
+      node.innerHTML = left;
+    }
+
+    let howClose = (total - left) / total; // 0 at start, 1 at end
+    node.style.fontSize = (minSize + howClose * increment) + 'px';
+    node.style.color = 'rgb(' + Math.round(howClose * 256) + ',0,0)';
+    node.style.lineHeight = node.style.height = (minSize + increment) + 'px';
+
+    let rotate = 0;
+    if (left <= specialEnd) {
+      let howClose = (specialEnd - left) / specialEnd;
+      rotate = -howClose * 360;
+    }
+    node.style.transform = 'rotate(' + rotate + 'deg)';
   }
   function setLeft (n) {
-    left = n;
-    localStorage.timer = n;
-    if (left >= 0) {
+    if (n >= 0) {
+      left = n;
+      localStorage.timer = n;
       render();
     }
   }
@@ -174,6 +202,7 @@ function timer () {
   function start () {
     // It's more pleasant UI if we tick right away
     tick();
+    clearInterval(interval);
     interval = setInterval(tick, 1000);
   }
   function stop () {

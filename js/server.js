@@ -41,8 +41,11 @@ let html = `
 `;
 
 app.use(express.static('css'));
-app.use(express.static('html'));
 app.use(express.static('js'));
+
+app.get('/', function (req, res) {
+  res.sendFile('scoreboard.html', {root: 'html'});
+});
 
 app.get('/log', function (req, res) {
   res.json(getData());
