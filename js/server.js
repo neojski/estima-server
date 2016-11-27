@@ -14,6 +14,14 @@ function writeSync (file, data) {
   fs.writeFileSync(file, data);
 }
 
+function getData() {
+  try {
+    return JSON.parse(fs.readFileSync(logFile));
+  } catch (e) {
+    return [];
+  }
+}
+
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
 }));
@@ -33,25 +41,12 @@ let html = `
 `;
 
 app.use(express.static('css'));
+app.use(express.static('html'));
+app.use(express.static('js'));
 
-app.get('/', function (req, res) {
-  var data = fs.readFileSync('dist/scoreboard.html');
-  res.send(data.toString());
+app.get('/log', function (req, res) {
+  res.json(getData());
 });
-
-function regenerateScoreboard() {
-  let data = null;
-  try {
-    data = JSON.parse(fs.readFileSync(logFile));
-  } catch (e) {
-    data = [];
-  }
-  writeSync('dist/scoreboard.html', display(data));
-
-  // backups
-  writeSync('dist/scoreboard' + (new Date().toISOString()) + '.html', display(data));
-}
-regenerateScoreboard();
 
 app.get('/add', function (req, res) {
   res.send(html);
@@ -66,16 +61,9 @@ app.post('/add', function (req, res) {
     from: +req.body.from,
     to: +req.body.to,
   };
-  let data = null;
-  try {
-    data = JSON.parse(fs.readFileSync(logFile));
-  } catch (e) {
-    data = [];
-  }
+  let data = getData();
   data.push(newRow);
   writeSync(logFile, JSON.stringify(data));
-
-  regenerateScoreboard();
 
   res.send('added:' + JSON.stringify(newRow) + html);
 });

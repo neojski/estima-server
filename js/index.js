@@ -1,6 +1,4 @@
-let fs = require('fs');
-
-module.exports = function (data) {
+function generateBoard (data) {
   let correctAnswers =
     [0.2, 2, 20, 200, 2000,
      0.2, 2, 20, 200, 2000,
@@ -119,15 +117,41 @@ module.exports = function (data) {
   }
 
   return (`
-    <!doctype html>
-      <head>
-        <style> thead { font-weight: bold } </style>
-        <meta http-equiv="refresh" content="5"/>
-        <link rel="stylesheet" href="bootstrap.min.css">
-      </head>
-      <body>
-        <table class="table table-bordered table-striped">${thead}</thead><tbody>${trs.map(tr => {return '<tr>' + tr.join('') + '</tr>'}).join('')}</tbody></table>
-      </body>
-      `);
+    <table class="table table-bordered table-striped">${thead}</thead><tbody>${trs.map(tr => {return '<tr>' + tr.join('') + '</tr>'}).join('')}</tbody></table>
+  `);
+}
 
+function getData (callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', '/log', true);
+  xhr.onreadystatechange = function() {
+    var status;
+    if (xhr.readyState == 4) { // `DONE`
+      status = xhr.status;
+      if (status == 200) {
+        callback(null, JSON.parse(xhr.responseText))
+      } else {
+        callback({error: 'Couldn\'t get response from server', status: status});
+      }
+    }
+  };
+  xhr.send();
+}
+
+function updateData () {
+  let table = document.getElementById('table');
+  let error = document.getElementById('error');
+  getData(function (err, json) {
+    setTimeout(updateData, 1000);
+    if (err) {
+      error.innerHTML = 'Error ' + JSON.stringify(err);
+      return;
+    }
+    error.innerHTML = '';
+    table.innerHTML = generateBoard(json);
+  });
+}
+
+onload = function () {
+  updateData();
 };
