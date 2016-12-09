@@ -3,7 +3,6 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser')
 var app = express();
-var display = require('./display');
 var mkdirp = require('mkdirp');
 var touch = require('touch');
 

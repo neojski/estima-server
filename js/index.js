@@ -1,9 +1,5 @@
 function generateBoard (data) {
-  let correctAnswers =
-    [0.2, 2, 20, 200, 2000,
-     0.2, 2, 20, 200, 2000,
-     0.2, 2, 20
-    ];
+  const N = 13;
   let teamNames = [
     "pierogi",
     "korale koloru korolowego",
@@ -14,13 +10,22 @@ function generateBoard (data) {
     "321523",
     "empty",
   ];
+  function getCorrectAnswer (q) {
+    // We number answers from 1
+    let correctAnswers =
+      [0.2, 2, 20, 200, 2000,
+      0.2, 2, 20, 200, 2000,
+      0.2, 2, 20
+      ];
+    return correctAnswers[q-1];
+  }
 
   // team -> question -> answers
   let answers = {};
 
   for (let team = 0; team < teamNames.length; team++) {
     answers[team] = {};
-    for (let question = 1; question <= correctAnswers.length; question++) {
+    for (let question = 1; question <= N; question++) {
       answers[team][question] = [];
     }
   }
@@ -41,7 +46,7 @@ function generateBoard (data) {
   // isCorrect === false then result is number of failures
   function questionScore (question, answers) {
     function isRight (answer) {
-      let correctAnswer = correctAnswers[question];
+      let correctAnswer = getCorrectAnswer(question);
       return (answer.from <= correctAnswer && correctAnswer <= answer.to);
     }
 
@@ -69,19 +74,19 @@ function generateBoard (data) {
   function teamScore (teamAnswers) {
     let sum = 10;
     let numberOfGoodOnes = 0;
-    for (let question = 1; question <= correctAnswers.length; question++) {
+    for (let question = 1; question <= N; question++) {
       let { isCorrect, result } = questionScore (question, teamAnswers[question]);
       if (isCorrect) {
         numberOfGoodOnes++;
         sum += result;
       }
     }
-    return sum * Math.pow(2, correctAnswers.length - numberOfGoodOnes);
+    return sum * Math.pow(2, N - numberOfGoodOnes);
   }
 
   function row (teamAnswers) {
     let tds = [];
-    for (let question = 1; question <= correctAnswers.length; question++) {
+    for (let question = 1; question <= N; question++) {
       let answers = teamAnswers[question];
       if (answers.length === 0) {
         tds.push('');
@@ -103,7 +108,7 @@ function generateBoard (data) {
   }
 
   let header = ['team'];
-  for (let question = 1; question <= correctAnswers.length; question++) {
+  for (let question = 1; question <= N; question++) {
     header.push(question);
   }
   header.push('score');
